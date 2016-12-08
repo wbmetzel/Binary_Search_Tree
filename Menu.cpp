@@ -11,7 +11,7 @@
 ********************************/
 Menu::Menu()
 {
-  //this->options;
+  this->root = NULL;
   this->title = "Title";
 }
 
@@ -25,7 +25,7 @@ Menu::Menu()
 ********************************/
 Menu::Menu(const string &title)
 {
-  //this->options;
+  this->root = NULL;
   this->title = title;
   this->width = this->setWidth();
 }
@@ -88,8 +88,44 @@ void Menu::clear()
 * Purpose: Add item to options
 *
 ********************************/
-void Menu::insert()
+void Menu::insert(const string &item)
 {
+  if(this->root == NULL)
+  {
+    this->root = new Option(item);
+    (this->root)->id = 1;
+  }
+  else
+  {
+    Option *current = root;
+    
+      // Traverse through list until next == NULL
+    while(current->next != NULL)
+    {
+      current = current->next;
+    }
+    
+    current->next = new Option(item);
+    (current->next)->id = current->id + 1;
+    std::cout << current->item << std::endl;
+  }
+  
+}
+
+
+/*******************************
+*
+* f(x): createStr
+* Created: 08 Dec 2016
+* Purpose: print 5 blank spaces
+*
+********************************/
+string Menu::createStr(const int &id, const string &item)
+{
+    std::stringstream ss;
+    ss << id << ". " << item;
+    
+    return ss.str();
 }
 
 
@@ -102,22 +138,24 @@ void Menu::insert()
 ********************************/
 void Menu::indent(const int &indentSize)
 {
-  std::cout.fill(' ') << std::cout.width(indentSize);  // Indent 
+  std::cout.fill(32) << std::cout.width(indentSize);  // Indent 
 }
 
 
 /*******************************
 *
-* f(x): print
+* f(x): printMenu
 * Created: 08 Dec 2016
 * Purpose: print menu
 *
 ********************************/
-void Menu::print()
+void Menu::printMenu()
 {
     // where to start printing title to center, NOT center of menu width
   unsigned short int centerFill = (this->width/2) - ((this->title).size() / 2);
   unsigned short int indentSize = 10;
+  Option *current = root;
+  string currentLine = "";
 
   this->clear();  // Clear screen
   
@@ -160,14 +198,22 @@ void Menu::print()
   std::cout << char(186) << std::endl;
   
   // Loop through list items
-  
+  while(current != NULL)
+  {
+    currentLine = createStr(current->id,current->item);
+    current = current->next;
+    
+    //unsigned short int width = ((current->item).size() < 25) ? (this->width / 2) : this->width;
+    //unsigned short int lineFill = width - ((current->item).size() / 2);
+    
       // Print menu options, options descriptions must be shorter than 46 chars!!
     this->indent(indentSize);
-    std::cout << char(186);
-    std::cout.fill(32) << std::cout.width(width - centerFill - 1);
-    std::cout << this->title;
-    std::cout.fill(32) << std::cout.width(centerFill - 1);
+    std::cout << char(186) << "  ";
+    //std::cout.fill(176) << std::cout.width(indentSize+ 10);
+    std::cout << currentLine;
+    std::cout.fill(32) << std::cout.width(this->width - (currentLine.size()) - 4);
     std::cout << char(186) << std::endl;
+  }
   
     // Blank fill line
   this->indent(indentSize);
@@ -179,6 +225,39 @@ void Menu::print()
   this->indent(indentSize);
   std::cout << char(200);
   std::cout.fill(205) << std::cout.width(width-2);
-  std::cout << char(188) << std::endl;
+  std::cout << char(188) << std::endl << std::endl;
   
+}
+
+
+/*******************************
+*
+* f(x): print
+* Created: 08 Dec 2016
+* Purpose: print menu and prompt
+*  VERY Basic - spend more time using exception handling, screen rendering to be smoother
+********************************/
+int Menu::print()
+{
+  string input;
+  int selection = 0;
+  bool valid = false;
+
+  do
+  {
+    this->printMenu();
+    input = "";
+    
+    std::cout << "\tSelection: ";
+    std::getline(std::cin, input);
+
+    if(input[0] >= 48 && input[0] <= 57)
+    { 
+      selection = int(input[0]);
+      valid = true;
+    }
+    
+  }while(!valid);
+  
+  return selection;
 }

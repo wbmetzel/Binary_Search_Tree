@@ -15,7 +15,18 @@ void menu();
 int main()
 {
   Menu *menu = new Menu("Binary Search Tree");
-  menu->print();
+  menu->insert("Add node to tree");
+  menu->insert("Delete node from tree");
+  menu->insert("Print: In order");
+  menu->insert("Print: Pre order");
+  menu->insert("Print: Post order");
+  
+  while(int temp = menu->print() > 0)
+  {
+    std::cout << temp;
+    break;
+  }
+  
 	try {
 
 		//BSTree<int> *T1 = new BSTree<int>();
@@ -30,6 +41,7 @@ int main()
 
 	std::cout << endl;
 
+  delete menu;
 	return 0;
 }
 
