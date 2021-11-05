@@ -1,3 +1,3 @@
 #include "BSTree.h"
 
-// To make some compilers happy
+// Implementation in BSTree.t (template file). This file solely exists to prevent compiler warnings.
